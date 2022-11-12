@@ -30,11 +30,17 @@ class RenameImporterActivity : AppCompatActivity() {
         builder.setPositiveButton("OK", object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 val data = intent.data ?: return
-                if (contentResolver.getType(data) == "application/zip") {
-                    val file = writeToDisk(data, "${input.getText()}.zip") ?: return
+                if (name.endsWith(".zip")){
+                    val file = writeToDisk(data, "${input.text}") ?: return
+                    ZipViewActivity.startZipActivity(this@RenameImporterActivity, file.path)
+                }else if (name.endsWith(".html")){
+                    val file = writeToDisk(data, "${input.text}") ?: return
+                    HtmlViewActivity.startHtmlActivity(this@RenameImporterActivity, file.path)
+                }else if (contentResolver.getType(data) == "application/zip") {
+                    val file = writeToDisk(data, "${input.text}.zip") ?: return
                     ZipViewActivity.startZipActivity(this@RenameImporterActivity, file.path)
                 } else {
-                    val file = writeToDisk(data, "${input.getText()}.html") ?: return
+                    val file = writeToDisk(data, "${input.text}.html") ?: return
                     HtmlViewActivity.startHtmlActivity(this@RenameImporterActivity, file.path)
                 }
             }
