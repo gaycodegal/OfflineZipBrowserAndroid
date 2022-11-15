@@ -9,19 +9,15 @@ import android.webkit.WebView
 import androidx.core.net.toUri
 import java.io.File
 
-class HtmlViewActivity : AppCompatActivity() {
+class HtmlViewActivity : WebActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view)
         val webView = findViewById<WebView>(R.id.webview)
         val file = File(intent.getStringExtra(ZipConstants.FILE_NAME) ?: return)
-        val name = file.toUri().lastPathSegment
-        title = name
-        webView.webViewClient = HtmlAssetLoader(file)
-        webView.settings.domStorageEnabled = true
-        webView.settings.javaScriptEnabled = true
-        webView.loadUrl("https://${name}.androidplatform.net/index.html")
+        title = loadWebsiteFromFile(webView, file)
+        webviewSetup(webView)
     }
 
     companion object {
@@ -31,6 +27,19 @@ class HtmlViewActivity : AppCompatActivity() {
             intent.putExtra(ZipConstants.FILE_NAME, path)
             context.startActivity(intent)
             context.finish()
+        }
+
+        @SuppressLint("SetJavaScriptEnabled")
+        fun loadWebsiteFromFile(webView: WebView, file: File, url: String): String {
+            val name = file.toUri().lastPathSegment
+            webView.webViewClient = HtmlAssetLoader(file)
+            Util.webviewSetup(webView)
+            webView.loadUrl(url)
+            return name ?: ""
+        }
+
+        fun loadWebsiteFromFile(webView: WebView, file: File): String {
+            return loadWebsiteFromFile(webView, file, Util.siteNameFromFile(file))
         }
     }
 }

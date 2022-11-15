@@ -29,6 +29,10 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".LicenseActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".RenameImporterActivity"
             android:exported="true">
             <intent-filter>

@@ -12,3 +12,16 @@ This project is meant so that I can play interactive fiction games, but it's als
 you will have access to this file. LocalStorage will persist across sessions.
 Which means most interactive fiction games with save states will work.
 
+Note: if you use termux + curl to download files, you will have to set the
+`allow-external-apps` property must be set to `true` in `~/.termux/termux.properties` in termux.
+
+## Intents in .RenameImporterActivity
+
+### `RENAME_FILE`
+
+rename a file
+
+### `DELETE_FILE`
+
+delete a file
+

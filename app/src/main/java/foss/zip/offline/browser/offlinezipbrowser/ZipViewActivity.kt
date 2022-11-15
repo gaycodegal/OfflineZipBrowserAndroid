@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import java.io.File
 import java.util.zip.ZipFile
 
-class ZipViewActivity : AppCompatActivity() {
+class ZipViewActivity : WebActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,8 +21,7 @@ class ZipViewActivity : AppCompatActivity() {
         title = name
         val zip = ZipFile(file)
         webView.webViewClient = ZipAssetLoader(zip)
-        webView.settings.domStorageEnabled = true
-        webView.settings.javaScriptEnabled = true
+        webviewSetup(webView)
         webView.loadUrl("https://${name}.androidplatform.net/index.html")
     }
 
