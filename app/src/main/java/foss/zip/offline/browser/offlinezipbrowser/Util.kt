@@ -44,6 +44,8 @@ class Util {
             webView.settings.displayZoomControls = false
             webView.settings.mediaPlaybackRequiresUserGesture = false
             webView.settings.allowFileAccess = false
+            webView.settings.loadWithOverviewMode = true
+            webView.settings.useWideViewPort = true
         }
 
         fun writeInputStreamToFile(inputStream: InputStream, path: File, name: String): File? {

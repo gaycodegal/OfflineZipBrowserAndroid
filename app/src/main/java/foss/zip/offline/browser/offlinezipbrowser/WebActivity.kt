@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.*
+import android.util.Log
 import android.view.KeyEvent
 import android.webkit.*
 import android.widget.Toast
@@ -43,6 +44,11 @@ open class WebActivity: AppCompatActivity() {
         webView.addJavascriptInterface(downloader!!, "Android")
         webView.webChromeClient = object : WebChromeClient() {
 
+            override fun onCloseWindow(window: WebView?) {
+                super.onCloseWindow(window)
+                onBackPressed()
+            }
+
             override fun onShowFileChooser(
                 webView: WebView?,
                 filePathCallback: ValueCallback<Array<Uri>>?,
@@ -71,7 +77,13 @@ open class WebActivity: AppCompatActivity() {
                 contentLength: Long
             ) {
                 try {
-                    val fileName = URLUtil.guessFileName(url, contentDisposition, mimetype)
+                    val isBlob = url.startsWith("blob:")
+                    val tempFileName = if (isBlob) {
+                        url.split('.').first() ?: url
+                    } else {
+                        url
+                    }
+                    val fileName = URLUtil.guessFileName(tempFileName, contentDisposition, mimetype)
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)?.let {
                         var file = File(it, fileName)
                         var fileI = 0
