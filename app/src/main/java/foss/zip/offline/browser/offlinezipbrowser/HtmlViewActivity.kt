@@ -2,8 +2,8 @@ package foss.zip.offline.browser.offlinezipbrowser
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.core.net.toUri
@@ -16,7 +16,7 @@ class HtmlViewActivity : WebActivity() {
         setContentView(R.layout.activity_view)
         val webView = findViewById<WebView>(R.id.webview)
         val file = File(intent.getStringExtra(ZipConstants.FILE_NAME) ?: return)
-        title = loadWebsiteFromFile(webView, file)
+        title = loadWebsiteFromFile(this, webView, file)
         webviewSetup(webView)
     }
 
@@ -30,16 +30,16 @@ class HtmlViewActivity : WebActivity() {
         }
 
         @SuppressLint("SetJavaScriptEnabled")
-        fun loadWebsiteFromFile(webView: WebView, file: File, url: String): String {
+        fun loadWebsiteFromFile(context: Context?, webView: WebView, file: File, url: String): String {
             val name = file.toUri().lastPathSegment
-            webView.webViewClient = HtmlAssetLoader(file)
+            webView.webViewClient = HtmlAssetLoader(file, context?.assets?.open("downloadNameHelper.js")?.bufferedReader(Charsets.UTF_8)?.readText())
             Util.webviewSetup(webView)
             webView.loadUrl(url)
             return name ?: ""
         }
 
-        fun loadWebsiteFromFile(webView: WebView, file: File): String {
-            return loadWebsiteFromFile(webView, file, Util.siteNameFromFile(file))
+        fun loadWebsiteFromFile(context: Context?, webView: WebView, file: File): String {
+            return loadWebsiteFromFile(context, webView, file, Util.siteNameFromFile(file))
         }
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.*
-import android.util.Log
 import android.view.KeyEvent
 import android.webkit.*
 import android.widget.Toast
@@ -37,38 +36,10 @@ open class WebActivity: AppCompatActivity() {
         }
     }
 
+
     fun webviewSetup(webView: WebView) {
-        web = webView
-        Util.webviewSetup(webView)
-        downloader = Downloader()
-        webView.addJavascriptInterface(downloader!!, "Android")
-        webView.webChromeClient = object : WebChromeClient() {
-
-            override fun onCloseWindow(window: WebView?) {
-                super.onCloseWindow(window)
-                onBackPressed()
-            }
-
-            override fun onShowFileChooser(
-                webView: WebView?,
-                filePathCallback: ValueCallback<Array<Uri>>?,
-                fileChooserParams: FileChooserParams?
-            ): Boolean {
-                mUploadMessage = filePathCallback
-                val i = Intent(Intent.ACTION_GET_CONTENT)
-                i.addCategory(Intent.CATEGORY_OPENABLE)
-                i.setType("*/*")
-                
-                this@WebActivity.startActivityForResult(
-                    Intent.createChooser(i, "File Chooser"),
-                    PICKED_SUCCESS_RESULTCODE
-                )
-                return true
-            }
-        }
-
-        webView.setDownloadListener(object : DownloadListener {
-
+        val downloadListener = object : DownloadListener {
+            var urlToIgnore:String? = null
             override fun onDownloadStart(
                 url: String,
                 userAgent: String,
@@ -76,6 +47,11 @@ open class WebActivity: AppCompatActivity() {
                 mimetype: String,
                 contentLength: Long
             ) {
+                if (urlToIgnore == url) {
+                    urlToIgnore = null
+                    return
+                }
+                urlToIgnore = url
                 try {
                     val isBlob = url.startsWith("blob:")
                     val tempFileName = if (isBlob) {
@@ -115,7 +91,36 @@ open class WebActivity: AppCompatActivity() {
                 }
             }
 
-        })
+        }
+        web = webView
+        Util.webviewSetup(webView)
+        downloader = Downloader(downloadListener)
+        webView.addJavascriptInterface(downloader!!, "Android")
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onCloseWindow(window: WebView?) {
+                super.onCloseWindow(window)
+                onBackPressed()
+            }
+
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                mUploadMessage = filePathCallback
+                val i = Intent(Intent.ACTION_GET_CONTENT)
+                i.addCategory(Intent.CATEGORY_OPENABLE)
+                i.setType("*/*")
+                
+                this@WebActivity.startActivityForResult(
+                    Intent.createChooser(i, "File Chooser"),
+                    PICKED_SUCCESS_RESULTCODE
+                )
+                return true
+            }
+        }
+
+        webView.setDownloadListener(downloadListener)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

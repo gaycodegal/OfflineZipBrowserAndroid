@@ -17,7 +17,7 @@ class LicenseActivity : AppCompatActivity() {
             } ?: return
         val name = file.toUri().lastPathSegment
         title = name
-        webView.webViewClient = HtmlAssetLoader(file)
+        webView.webViewClient = HtmlAssetLoader(file, null)
         webView.loadUrl(Util.siteNameFromFile(file))
     }
 }

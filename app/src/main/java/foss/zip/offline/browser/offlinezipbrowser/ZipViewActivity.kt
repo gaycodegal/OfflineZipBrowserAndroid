@@ -3,7 +3,6 @@ package foss.zip.offline.browser.offlinezipbrowser
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.core.net.toUri
@@ -20,7 +19,7 @@ class ZipViewActivity : WebActivity() {
         val name = file.toUri().lastPathSegment
         title = name
         val zip = ZipFile(file)
-        webView.webViewClient = ZipAssetLoader(zip)
+        webView.webViewClient = ZipAssetLoader(zip, assets.open("downloadNameHelper.js").bufferedReader(Charsets.UTF_8).readText())
         webviewSetup(webView)
         webView.loadUrl("https://${name}.androidplatform.net/index.html")
     }

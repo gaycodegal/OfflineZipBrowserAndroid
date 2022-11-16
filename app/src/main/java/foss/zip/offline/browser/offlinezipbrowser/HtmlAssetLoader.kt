@@ -1,5 +1,6 @@
 package foss.zip.offline.browser.offlinezipbrowser
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -8,9 +9,14 @@ import androidx.webkit.WebViewClientCompat
 import java.io.File
 
 
-class HtmlAssetLoader(val htmlFile: File) : WebViewClientCompat() {
+class HtmlAssetLoader(private val htmlFile: File, private val onPageStartedScript: String?) : WebViewClientCompat() {
     private val utf8: String = Charsets.UTF_8.displayName()
 
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        super.onPageStarted(view, url, favicon)
+        val script = onPageStartedScript ?: return
+        view?.evaluateJavascript(script, null)
+    }
 
     override fun shouldInterceptRequest(
         view: WebView?,

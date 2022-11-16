@@ -1,7 +1,7 @@
 package foss.zip.offline.browser.offlinezipbrowser
 
+import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.webkit.MimeTypeMap
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -12,9 +12,15 @@ import java.io.File
 import java.util.zip.ZipFile
 
 
-class ZipAssetLoader(val zipFile: ZipFile) : WebViewClientCompat() {
+class ZipAssetLoader(private val zipFile: ZipFile, private val onPageStartedScript: String?) : WebViewClientCompat() {
     private val utf8: String = Charsets.UTF_8.displayName()
     private val basePath: String = findBasePath()
+
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        super.onPageStarted(view, url, favicon)
+        val script = onPageStartedScript ?: return
+        view?.evaluateJavascript(script, null)
+    }
 
     private fun findBasePath (): String {
         if (zipFile.getEntry("index.html") != null) {

@@ -6,9 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
-import android.webkit.CookieManager
-import android.webkit.CookieSyncManager
 import android.webkit.WebView
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -68,7 +65,7 @@ class RenameImporterActivity : AppCompatActivity() {
             }
         if (file != null) {
             val webView = findViewById<WebView>(R.id.webview)
-            HtmlViewActivity.loadWebsiteFromFile(webView, file, Util.siteNameFromFile(sourceFile))
+            HtmlViewActivity.loadWebsiteFromFile(null, webView, file, Util.siteNameFromFile(sourceFile))
         }
     }
 
