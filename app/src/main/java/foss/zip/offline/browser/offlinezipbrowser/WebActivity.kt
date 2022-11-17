@@ -124,9 +124,15 @@ open class WebActivity: AppCompatActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && web!!.canGoBack()) {
-            web!!.goBack()
-            return true
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (web?.canGoBack() == true) {
+                web!!.goBack()
+                return true
+            } else {
+                web?.destroy()
+                onBackPressed()
+                return true
+            }
         }
         return super.onKeyDown(keyCode, event)
     }

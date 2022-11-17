@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
+import android.webkit.MimeTypeMap
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -119,13 +121,16 @@ class RenameImporterActivity : AppCompatActivity() {
                 val file = writeToDisk(data, "$text.html") ?: return@getName
                 HtmlViewActivity.startHtmlActivity(this@RenameImporterActivity, file.path)
             }
+            finish()
             intent = Intent()
         }
     }
 
     private fun getName(name: String, onSuccess: (text:String)->Unit) {
+        val mime = MimeTypeMap.getSingleton()
+        val ext = mime.getExtensionFromMimeType(intent.data?.let { contentResolver.getType(it) })
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Zip file name")
+        builder.setTitle("$ext file name")
         val input = EditText(this)
         input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
         input.setText(name)
@@ -140,7 +145,7 @@ class RenameImporterActivity : AppCompatActivity() {
         builder.setNegativeButton("Cancel"
         ) { dialog, which ->
             dialog.cancel()
-            finish()
+            finishAndRemoveTask()
         }
 
         builder.show()

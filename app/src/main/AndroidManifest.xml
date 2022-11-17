@@ -21,6 +21,25 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".DeepLinkActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "app://foss.zip.offline.browser.offlinezipbrowser/action/” -->
+                <!-- Debug: Accepts URIs that begin with "app://foss.zip.offline.browser.offlinezipbrowser.debug/action/” -->
+                <data android:scheme="app"
+                    android:host="@string/package_name"
+                    android:pathPrefix="/action"/>
+                <data android:scheme="app"
+                    android:host="@string/package_name"
+                    android:pathPrefix="/play"/>
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".ZipViewActivity"
             android:exported="true">
         </activity>

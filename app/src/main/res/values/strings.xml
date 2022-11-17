@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Offline Zip Browser</string>
     <string name="app_name_short">Offline Zip Browser</string>
+    <string translatable="false" name="package_name">foss.zip.offline.browser.offlinezipbrowser</string>
 </resources>

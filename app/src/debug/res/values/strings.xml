@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Offline Zip Browser Debug</string>
     <string name="app_name_short">OZB Debug</string>
+    <string translatable="false" name="package_name">foss.zip.offline.browser.offlinezipbrowser.debug</string>
 </resources>

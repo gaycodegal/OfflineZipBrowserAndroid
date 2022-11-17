@@ -27,10 +27,9 @@ class ZipViewActivity : WebActivity() {
     companion object {
         fun startZipActivity (context: Activity, path: String) {
             val intent = Intent(context, ZipViewActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME or Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra(ZipConstants.FILE_NAME, path)
             context.startActivity(intent)
-            context.finish()
         }
     }
 }
