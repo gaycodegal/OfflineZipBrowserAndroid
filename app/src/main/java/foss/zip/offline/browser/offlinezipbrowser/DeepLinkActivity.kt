@@ -50,6 +50,10 @@ class DeepLinkActivity : AppCompatActivity() {
                 intent = Intent(this, RenameImporterActivity::class.java)
                 intent.action = "RENAME_FILE"
             }
+            "/action/create-shortcut" -> {
+                intent = Intent(this, RenameImporterActivity::class.java)
+                intent.action = "CREATE_SHORTCUT"
+            }
             else -> {
                 Log.e("OfflineZipBrowser", "Could not open action $uri")
                 return finishAndRemoveTask()

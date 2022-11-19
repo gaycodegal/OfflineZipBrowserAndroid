@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">Offline Zip Browser</string>
     <string name="app_name_short">Offline Zip Browser</string>
+    <string name="shortcut_maker_icon">The icon the shortcut will use</string>
+    <string name="shortcut_maker_accept">Make shortcut</string>
+    <string name="shortcut_maker_reject">@string/reject</string>
+    <string name="reject">Cancel</string>
+    <string name="accept">Ok</string>
+    <string name="play_file">Browse Library</string>
+    <string name="rename_file">Rename File</string>
+    <string name="delete_file">Delete File</string>
+    <string name="create_shortcut">Create Shortcut</string>
+    <string name="shortcut_maker_next_icon">Go to the next icon</string>
+    <string name="shortcut_maker_previous_icon">Go to the previous icon</string>
+    <string name="shortcut_maker_file_path_input">Path of the shortcut image within the zip folder</string>
     <string translatable="false" name="package_name">foss.zip.offline.browser.offlinezipbrowser</string>
+    <string translatable="false" name="browse_action">/action/pick</string>
+    <string translatable="false" name="rename_action">/action/rename-file</string>
+    <string translatable="false" name="delete_action">/action/delete-file</string>
+    <string translatable="false" name="shortcut_action">/action/create-shortcut</string>
 </resources>

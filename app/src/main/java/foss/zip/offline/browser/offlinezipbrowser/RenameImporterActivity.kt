@@ -30,6 +30,8 @@ class RenameImporterActivity : AppCompatActivity() {
                 renameFile()
             "DELETE_FILE"->
                 deleteFile()
+            "CREATE_SHORTCUT"->
+                createShortcut()
         }
 
     }
@@ -51,7 +53,7 @@ class RenameImporterActivity : AppCompatActivity() {
                         val sourceFile = File(source)
                         clearCache(sourceFile)
                         sourceFile.delete()
-                        intent = Intent()
+                        finishAndRemoveTask()
                     }
                     .setNegativeButton("No", null).show()
             }
@@ -78,12 +80,28 @@ class RenameImporterActivity : AppCompatActivity() {
                 val source = it.first()
                 val sourceName = File(source).toUri().lastPathSegment ?: "Untitled"
                 getName(sourceName){
-                    dest ->
+                        dest ->
                     val sourceFile = File(source)
                     clearCache(sourceFile)
                     sourceFile.renameTo(File(sourceFile.parent, dest))
-                    intent = Intent()
+                    finishAndRemoveTask()
                 }
+            }
+        }
+        Util.launchFilePicker(this)
+    }
+
+    private fun createShortcut(){
+        setContentView(R.layout.activity_main)
+        onFilePicked = {
+            if (!it.isEmpty()){
+                val source = it.first()
+                val newIntent = Intent(this, ShortLinkMakerActivity::class.java)
+                newIntent.putExtra(ZipConstants.FILE_NAME, source)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(newIntent)
+                finish()
+                intent = Intent()
             }
         }
         Util.launchFilePicker(this)
