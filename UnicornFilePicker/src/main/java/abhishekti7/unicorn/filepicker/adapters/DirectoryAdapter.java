@@ -1,5 +1,6 @@
 package abhishekti7.unicorn.filepicker.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.TypedValue;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -68,6 +70,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             return results;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             filesListFiltered = (ArrayList<DirectoryModel>) results.values;
@@ -156,11 +159,12 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
                     }
                     /* if another item selected, then remove and then add current item */
                     else{
-                        selected.remove(0);
+                        String removed = selected.remove(0);
                         selected.add(0, String.valueOf(position));
+                        notifyItemChanged(Integer.parseInt(removed));
                     }
                 }
-                notifyDataSetChanged();
+                notifyItemChanged(position);
                 onFilesClickListener.onFileSelected(filesListFiltered.get(position));
             }
         });
@@ -204,13 +208,28 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         return filesListFiltered.size();
     }
 
+    public class ViewGroupHolder {
+        private final Group group;
+        private final View rootView;
+        public ViewGroupHolder (@NonNull Group group, @NonNull View rootView) {
+            this.group = group;
+            this.rootView = rootView;
+        }
+
+        public void setVisibility(int visibility) {
+            for (int id : this.group.getReferencedIds()) {
+               rootView.findViewById(id).setVisibility(visibility);
+            }
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tv_folder_name;
         private TextView tv_file_name;
         private TextView tv_date;
         private TextView tv_num_files;
-        private RadioButton rg_selected;
+        private ViewGroupHolder rg_selected;
         private RelativeLayout rl_file_root;
         private ImageView item_icon;
 
@@ -221,7 +240,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             tv_folder_name = itemView.findViewById(R.id.tv_folder_name);
             tv_date = itemView.findViewById(R.id.tv_date);
             tv_num_files = itemView.findViewById(R.id.tv_num_files);
-            rg_selected = itemView.findViewById(R.id.rg_selected);
+            rg_selected = new ViewGroupHolder(itemView.findViewById(R.id.rg_selected), itemView);
             rl_file_root = itemView.findViewById(R.id.rl_file_root);
             item_icon = itemView.findViewById(R.id.item_icon);
         }
