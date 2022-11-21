@@ -1,4 +1,5 @@
 <resources>
     <string name="unicorn_search">Search</string>
     <string name="unicorn_no_files">No files</string>
+    <string name="unicorn_accept_selection">Accept selection</string>
 </resources>

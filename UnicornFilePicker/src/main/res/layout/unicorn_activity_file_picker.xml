@@ -89,8 +89,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:contentDescription="@string/unicorn_accept_selection"
+        android:minHeight="48dp"
+        android:src="@drawable/unicorn_ic_done"
         app:borderWidth="0dp"
-        app:maxImageSize="32dp"
-        android:src="@drawable/unicorn_ic_done"/>
+        app:maxImageSize="32dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
