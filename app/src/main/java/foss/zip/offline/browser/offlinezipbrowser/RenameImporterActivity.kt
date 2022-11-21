@@ -16,6 +16,8 @@ import androidx.core.net.toUri
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 class RenameImporterActivity : AppCompatActivity() {
     private var onFilePicked: ((ArrayList<String>)->Unit)? = null
@@ -124,7 +126,7 @@ class RenameImporterActivity : AppCompatActivity() {
     private fun importFile(){
         setContentView(R.layout.activity_main)
         val data = intent.data ?: return
-        getName(data.lastPathSegment?.split('/')?.last() ?: "Untitled") {
+        getName(URLDecoder.decode(data.lastPathSegment, Charsets.UTF_8.name())?.split('/')?.last() ?: "Untitled") {
             text ->
             if (text.endsWith(".zip")){
                 val file = writeToDisk(data, text) ?: return@getName
@@ -156,7 +158,7 @@ class RenameImporterActivity : AppCompatActivity() {
 
         builder.setPositiveButton("OK", object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface?, which: Int) {
-                val text = "${input.text}"
+                var text = Util.safeNameify("${input.text}")
                 onSuccess(text)
             }
         })

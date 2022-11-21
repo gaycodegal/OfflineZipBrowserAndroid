@@ -36,6 +36,10 @@ class Util {
             return "https://${name}.androidplatform.net/index.html"
         }
 
+        fun safeNameify(name: String?): String {
+            return name?.replace("/", "_")?.trimStart('.')?.trim() ?: "Untitled.txt"
+        }
+
         @SuppressLint("SetJavaScriptEnabled")
         fun webviewSetup(webView: WebView){
             webView.settings.domStorageEnabled = true
