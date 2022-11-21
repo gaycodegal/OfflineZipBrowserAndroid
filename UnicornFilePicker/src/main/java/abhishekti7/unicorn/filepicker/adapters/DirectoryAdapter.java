@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -161,10 +160,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
                     else{
                         String removed = selected.remove(0);
                         selected.add(0, String.valueOf(position));
-                        notifyItemChanged(Integer.parseInt(removed));
+                        notifyItemChanged(Integer.parseInt(removed), new Object());
                     }
                 }
-                notifyItemChanged(position);
+                notifyItemChanged(position, new Object());
                 onFilesClickListener.onFileSelected(filesListFiltered.get(position));
             }
         });
