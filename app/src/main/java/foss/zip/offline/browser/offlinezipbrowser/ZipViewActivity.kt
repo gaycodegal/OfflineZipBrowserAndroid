@@ -21,7 +21,11 @@ class ZipViewActivity : WebActivity() {
         val zip = ZipFile(file)
         webView.webViewClient = ZipAssetLoader(zip, assets.open("downloadNameHelper.js").bufferedReader(Charsets.UTF_8).readText())
         webviewSetup(webView)
-        webView.loadUrl("https://${name}.androidplatform.net/index.html")
+        if (name?.contains(".unsafe_use_raw_domain") == true){
+            webView.loadUrl("https://${name.split(".unsafe_use_raw_domain").first()}/index.html")
+        } else {
+            webView.loadUrl("https://${name}.androidplatform.net/index.html")
+        }
     }
 
     companion object {
