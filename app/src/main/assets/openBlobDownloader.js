@@ -17,12 +17,16 @@
     // windows-1251, which is a 1 byte per character scheme.
     // importantly it has every single possible 8 bit value
     // defined.
-
+    //
     // java is very inefficient at converting typed arrays
     // from javascript to java, so this is our best workaround
     // learn more at
     // https://en.wikipedia.org/wiki/Windows-1251
     // https://stackoverflow.com/questions/27034897/is-there-a-way-to-pass-an-arraybuffer-from-javascript-to-java-on-android
+    //
+    // also unlike what the aforementioned link claims, 1251 is
+    // actually supported, see:
+    // https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/encoding
     let decoder = new TextDecoder("windows-1251");
     function sliceRead(event) {
         bytesRead += event.loaded;
