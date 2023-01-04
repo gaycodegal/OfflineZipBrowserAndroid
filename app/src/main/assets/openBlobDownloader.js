@@ -7,17 +7,28 @@
 */
 (function(url, buffer_size, fileId) {
     const request = new XMLHttpRequest();
-    const file_reader = new FileReader();
     request.open("GET", url, true);
     request.responseType = "blob";
     request.onload = download;
     request.send();
+    let response = null;
+    let size = null;
     let bytesRead = 0;
+    // windows-1251, which is a 1 byte per character scheme.
+    // importantly it has every single possible 8 bit value
+    // defined.
+
+    // java is very inefficient at converting typed arrays
+    // from javascript to java, so this is our best workaround
+    // learn more at
+    // https://en.wikipedia.org/wiki/Windows-1251
+    // https://stackoverflow.com/questions/27034897/is-there-a-way-to-pass-an-arraybuffer-from-javascript-to-java-on-android
+    let decoder = new TextDecoder("windows-1251");
     function sliceRead(event) {
-        const response = request.response;
         bytesRead += event.loaded;
-        Android.writeToDisk(file_reader.result, fileId)
-        if (bytesRead < response.size) {
+	
+        Android.writeToDisk(decoder.decode(this.result), fileId);
+        if (bytesRead < size) {
             download();
         } else {
             close();
@@ -27,12 +38,15 @@
         Android.close(fileId)
     }
     function download() {
-        const response = request.response;
-        file_reader.onload = sliceRead;
+	response = response ?? request.response;
+	size = size ?? response.size;
+	const file_reader = new FileReader();
+        file_reader.onload = sliceRead.bind(file_reader);
         file_reader.onabort = close;
         file_reader.onerror = close;
         // possibly try to get arraybuffer out of the blob
-        file_reader.readAsBinaryString(response.slice(bytesRead, bytesRead + buffer_size));
+	// readAsBinaryString deprecated
+        file_reader.readAsArrayBuffer(response.slice(bytesRead, bytesRead + buffer_size));
     }
     // intentionally no new line at end of file. file called by concatenation
 })

@@ -5,17 +5,20 @@ import android.os.Looper
 import android.webkit.DownloadListener
 import android.webkit.JavascriptInterface
 import java.io.File
+import java.nio.charset.Charset
 import java.util.Collections
 
 class Downloader (val downloader: DownloadListener) {
     private var fileId = 0
     private var fileLock = Any()
     private val files:MutableMap<Int, File> = Collections.synchronizedMap(mutableMapOf());
+    private val windows1251 = Charset.forName("windows-1251")
     @JavascriptInterface
     fun writeToDisk(bytes: String, fileId: Int){
         synchronized(fileLock){
             val file = files[fileId] ?: return
-            file.writeBytes(bytes.toByteArray())
+            val bytes = bytes.toByteArray(windows1251)
+            file.appendBytes(bytes)
         }
     }
     @JavascriptInterface
