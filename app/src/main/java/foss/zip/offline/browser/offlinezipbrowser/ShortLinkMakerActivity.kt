@@ -141,7 +141,7 @@ class ShortLinkMakerActivity : AppCompatActivity() {
     }
 
     private fun findAllIcons (zipFile: ZipFile): List<String> {
-        val extensions = setOf<String>("png", "jpg")
+        val extensions = setOf<String>("png", "jpg", "ico", "webp")
         val result = mutableListOf<String>()
         if (zipFile.getEntry("favicon.ico") != null) {
             result.add("favicon.ico")

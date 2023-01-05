@@ -71,7 +71,11 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val onPageStartedScri
             return null
         }
         var path = uri.path ?: return return404(uri)
+        if (path.endsWith("/")) {
+            path += "index.html"
+        }
         path = File(basePath, path).path
+
         if (path.startsWith("/")) {
             path = path.substring(1)
         } else if (path.startsWith("./")) {
