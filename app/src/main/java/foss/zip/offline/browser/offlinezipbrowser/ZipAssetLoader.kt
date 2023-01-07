@@ -28,11 +28,9 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val onPageStartedScri
         }
         for (file in zipFile.entries()) {
             if (file.isDirectory) {
-                continue
-            }
-            val segments = Uri.parse(file.name).pathSegments
-            if (!file.isDirectory && segments.last() == "index.html") {
-                return segments.subList(0, segments.size - 1).joinToString("/")
+                if (zipFile.getEntry(file.name + "index.html") != null) {
+                    return file.name
+                }
             }
         }
         return ""
