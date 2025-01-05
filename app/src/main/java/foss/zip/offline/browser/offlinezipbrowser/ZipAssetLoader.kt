@@ -22,9 +22,9 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
     private val basePath: String = findBasePath()
 
     // manifest config block
-    private val manifest = getManifest()
-    val baseURL = findBaseURL()
-    private val dateToSpoof = manifestDateToSpoof()
+    private val manifest = getManifest(basePath)
+    val baseURL = findBaseURL(manifest)
+    private val dateToSpoof = manifestDateToSpoof(manifest)
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
@@ -32,7 +32,7 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
 
         if (dateToSpoof != null) {
             val jsFormattedAnchorDate =
-                DateTimeFormatter.ofPattern("yyyy-MM-DDTHH:mm:ss.sssZ").format(dateToSpoof)
+                DateTimeFormatter.ofPattern("yyyy-MM-DD'T'HH:mm:ss.SSS'Z'").format(dateToSpoof)
             val dateReplacementScriptInitialized =
                 dateReplacementScript.replace("%%DATE_GOES_HERE%%", jsFormattedAnchorDate)
             view?.evaluateJavascript(dateReplacementScriptInitialized, null)
@@ -40,7 +40,7 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
         }
     }
 
-    private fun findBaseURL (): String {
+    private fun findBaseURL (manifest: JSONObject?): String {
         val maybeUnsafeURL = manifestUseUnsafeURL()
         if (maybeUnsafeURL != null) {
             return maybeUnsafeURL
@@ -57,7 +57,7 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
         return manifest.getString(KEY_USE_UNSAFE_URL)
     }
 
-    private fun manifestDateToSpoof (): OffsetDateTime? {
+    private fun manifestDateToSpoof (manifest: JSONObject?): OffsetDateTime? {
         if (manifest == null || !manifest.has(KEY_DATE_TO_SPOOF)) {
             return null
         }
@@ -65,8 +65,9 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
         return OffsetDateTime.parse(dateString)
     }
 
-    private fun getManifest (): JSONObject? {
-        val zipEntry = zipFile.getEntry("ozb_manifest.json") ?: return null
+    private fun getManifest (basePath: String): JSONObject? {
+        val manifestPath = File(basePath, "ozb_manifest.json").path
+        val zipEntry = zipFile.getEntry(manifestPath) ?: return null
 
         val manifestContents = zipFile.getInputStream(zipEntry).use {
             return@use it.readBytes()
