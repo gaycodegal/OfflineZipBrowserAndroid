@@ -71,7 +71,7 @@ class RenameImporterActivity : AppCompatActivity() {
             }
         if (file != null) {
             val webView = findViewById<WebView>(R.id.webview)
-            HtmlViewActivity.loadWebsiteFromFile(null, webView, file, Util.siteNameFromFile(sourceFile))
+            HtmlViewActivity.loadWebsiteFromFile(null, webView, file, null, Util.siteNameFromFile(sourceFile))
         }
     }
 

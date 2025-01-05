@@ -123,6 +123,19 @@ open class WebActivity: AppCompatActivity() {
         webView.setDownloadListener(downloadListener)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val webBundle = Bundle()
+        web?.saveState(webBundle)
+        outState.putBundle("webBundle", webBundle)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val webBundle = savedInstanceState.getBundle("webBundle") ?: return
+        web?.restoreState(webBundle)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (web?.canGoBack() == true) {
