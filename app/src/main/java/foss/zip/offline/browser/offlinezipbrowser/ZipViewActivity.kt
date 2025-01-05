@@ -22,7 +22,7 @@ class ZipViewActivity : WebActivity() {
         val downloadHelperScript = assets.open("downloadNameHelper.js").bufferedReader(Charsets.UTF_8).readText()
         val dateOverrideScript = assets.open("dateReplacer.js").bufferedReader(Charsets.UTF_8).readText()
 
-        var zipAssetLoader = ZipAssetLoader(zip, name, dateOverrideScript, dateOverrideScript)
+        var zipAssetLoader = ZipAssetLoader(zip, name, downloadHelperScript, dateOverrideScript)
         webView.webViewClient = zipAssetLoader
         webviewSetup(webView)
 

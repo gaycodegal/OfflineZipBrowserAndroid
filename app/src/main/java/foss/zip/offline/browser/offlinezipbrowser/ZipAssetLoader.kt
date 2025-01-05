@@ -10,13 +10,8 @@ import androidx.webkit.WebViewClientCompat
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.zip.ZipFile
 
 const val KEY_DATE_TO_SPOOF = "dateToSpoof"
