@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "foss.zip.offline.browser.offlinezipbrowser"
-        minSdk 21
+        minSdk 26
         targetSdk 33
         versionCode 11
         versionName "0.11.0"
