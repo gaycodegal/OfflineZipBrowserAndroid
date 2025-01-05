@@ -7,19 +7,79 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.webkit.WebViewClientCompat
+import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.zip.ZipFile
 
+const val KEY_DATE_TO_SPOOF = "dateToSpoof"
+const val KEY_USE_UNSAFE_URL = "useUnsafeURL"
 
-class ZipAssetLoader(private val zipFile: ZipFile, private val onPageStartedScript: String?) : WebViewClientCompat() {
+class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: String, private val downloadHelperScript: String, private val dateReplacementScript: String) : WebViewClientCompat() {
     private val utf8: String = Charsets.UTF_8.displayName()
     private val basePath: String = findBasePath()
 
+    // manifest config block
+    private val manifest = getManifest(basePath)
+    val baseURL = findBaseURL(manifest)
+    private val dateToSpoof = manifestDateToSpoof(manifest)
+
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
-        val script = onPageStartedScript ?: return
-        view?.evaluateJavascript(script, null)
+        view?.evaluateJavascript(downloadHelperScript, null)
+
+        // TODO clear cache for sites better
+        /*if (shouldClearCache) {
+            view?.clearCache(true)
+        } else if (shouldClearCacheKeepDisk) {
+            view?.clearCache(false)
+        }*/
+
+        if (dateToSpoof != null) {
+            val jsFormattedAnchorDate =
+                DateTimeFormatter.ofPattern("yyyy-MM-DD'T'HH:mm:ss.SSS'Z'").format(dateToSpoof)
+            val dateReplacementScriptInitialized =
+                dateReplacementScript.replace("%%DATE_GOES_HERE%%", jsFormattedAnchorDate)
+            view?.evaluateJavascript(dateReplacementScriptInitialized, null)
+
+        }
+    }
+
+    private fun findBaseURL (manifest: JSONObject?): String {
+        val maybeUnsafeURL = manifestUseUnsafeURL(manifest)
+        if (maybeUnsafeURL != null) {
+            return maybeUnsafeURL
+        }
+
+        return "${loadedFileName}.androidplatform.net"
+    }
+
+    private fun manifestUseUnsafeURL (manifest: JSONObject?): String? {
+        if (manifest == null || !manifest.has(KEY_USE_UNSAFE_URL)) {
+            return null
+        }
+
+        return manifest.getString(KEY_USE_UNSAFE_URL)
+    }
+
+    private fun manifestDateToSpoof (manifest: JSONObject?): OffsetDateTime? {
+        if (manifest == null || !manifest.has(KEY_DATE_TO_SPOOF)) {
+            return null
+        }
+        val dateString = manifest.getString(KEY_DATE_TO_SPOOF)
+        return OffsetDateTime.parse(dateString)
+    }
+
+    private fun getManifest (basePath: String): JSONObject? {
+        val manifestPath = File(basePath, "ozb_manifest.json").path
+        val zipEntry = zipFile.getEntry(manifestPath) ?: return null
+
+        val manifestContents = zipFile.getInputStream(zipEntry).use {
+            return@use it.readBytes()
+        }.toString(Charsets.UTF_8)
+        return JSONObject(manifestContents)
     }
 
     private fun findBasePath (): String {

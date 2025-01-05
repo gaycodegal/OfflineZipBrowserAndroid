@@ -16,16 +16,17 @@ class ZipViewActivity : WebActivity() {
         setContentView(R.layout.activity_view)
         val webView = findViewById<WebView>(R.id.webview)
         val file = File(intent.getStringExtra(ZipConstants.FILE_NAME) ?: return)
-        val name = file.toUri().lastPathSegment
+        val name = file.toUri().lastPathSegment ?: "no-name"
         title = name
         val zip = ZipFile(file)
-        webView.webViewClient = ZipAssetLoader(zip, assets.open("downloadNameHelper.js").bufferedReader(Charsets.UTF_8).readText())
+        val downloadHelperScript = assets.open("downloadNameHelper.js").bufferedReader(Charsets.UTF_8).readText()
+        val dateOverrideScript = assets.open("dateReplacer.js").bufferedReader(Charsets.UTF_8).readText()
+
+        var zipAssetLoader = ZipAssetLoader(zip, name, downloadHelperScript, dateOverrideScript)
+        webView.webViewClient = zipAssetLoader
         webviewSetup(webView)
-        if (name?.contains(".unsafe_use_raw_domain") == true){
-            webView.loadUrl("https://${name.split(".unsafe_use_raw_domain").first()}/index.html")
-        } else {
-            webView.loadUrl("https://${name}.androidplatform.net/index.html")
-        }
+
+        webView.loadUrl("https://${zipAssetLoader.baseURL}/index.html")
     }
 
     companion object {
