@@ -15,6 +15,7 @@ class ZipViewActivity : WebActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view)
         val webView = findViewById<WebView>(R.id.webview)
+
         val file = File(intent.getStringExtra(ZipConstants.FILE_NAME) ?: return)
         val name = file.toUri().lastPathSegment ?: "no-name"
         title = name
@@ -26,7 +27,22 @@ class ZipViewActivity : WebActivity() {
         webView.webViewClient = zipAssetLoader
         webviewSetup(webView)
 
+        if (savedInstanceState != null) {
+            webView.restoreState(savedInstanceState)
+            return
+        }
+
         webView.loadUrl("https://${zipAssetLoader.baseURL}/index.html")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        web?.saveState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        web?.restoreState(savedInstanceState)
     }
 
     companion object {
