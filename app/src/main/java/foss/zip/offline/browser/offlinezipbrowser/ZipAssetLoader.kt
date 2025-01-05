@@ -16,6 +16,8 @@ import java.util.zip.ZipFile
 
 const val KEY_DATE_TO_SPOOF = "dateToSpoof"
 const val KEY_USE_UNSAFE_URL = "useUnsafeURL"
+const val KEY_WIPE_CACHE = "wipeCacheOnStart"
+const val KEY_WIPE_CACHE_NO_DISK = "wipeCachePreserveDisk"
 
 class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: String, private val downloadHelperScript: String, private val dateReplacementScript: String) : WebViewClientCompat() {
     private val utf8: String = Charsets.UTF_8.displayName()
@@ -24,11 +26,19 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
     // manifest config block
     private val manifest = getManifest(basePath)
     val baseURL = findBaseURL(manifest)
+    private val shouldClearCache = checkShouldClearCache(manifest)
+    private val shouldClearCacheKeepDisk = checkShouldClearCacheAndPreserveDisk(manifest)
     private val dateToSpoof = manifestDateToSpoof(manifest)
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         view?.evaluateJavascript(downloadHelperScript, null)
+
+        if (shouldClearCache) {
+            view?.clearCache(true)
+        } else if (shouldClearCacheKeepDisk) {
+            view?.clearCache(false)
+        }
 
         if (dateToSpoof != null) {
             val jsFormattedAnchorDate =
@@ -41,7 +51,7 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
     }
 
     private fun findBaseURL (manifest: JSONObject?): String {
-        val maybeUnsafeURL = manifestUseUnsafeURL()
+        val maybeUnsafeURL = manifestUseUnsafeURL(manifest)
         if (maybeUnsafeURL != null) {
             return maybeUnsafeURL
         }
@@ -49,7 +59,23 @@ class ZipAssetLoader(private val zipFile: ZipFile, private val loadedFileName: S
         return "${loadedFileName}.androidplatform.net"
     }
 
-    private fun manifestUseUnsafeURL (): String? {
+    private fun checkShouldClearCache (manifest: JSONObject?): Boolean {
+        if (manifest == null || !manifest.has(KEY_WIPE_CACHE)) {
+            return false
+        }
+
+        return manifest.getBoolean(KEY_WIPE_CACHE)
+    }
+
+    private fun checkShouldClearCacheAndPreserveDisk (manifest: JSONObject?): Boolean {
+        if (manifest == null || !manifest.has(KEY_WIPE_CACHE_NO_DISK)) {
+            return false
+        }
+
+        return manifest.getBoolean(KEY_WIPE_CACHE_NO_DISK)
+    }
+
+    private fun manifestUseUnsafeURL (manifest: JSONObject?): String? {
         if (manifest == null || !manifest.has(KEY_USE_UNSAFE_URL)) {
             return null
         }
