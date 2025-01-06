@@ -51,10 +51,12 @@
 
         <activity
             android:name=".ZipViewActivity"
+            android:configChanges="keyboard|orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="true">
         </activity>
         <activity
             android:name=".HtmlViewActivity"
+            android:configChanges="keyboard|orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="true">
         </activity>
         <activity

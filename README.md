@@ -51,5 +51,4 @@ delete a file
 ## TODO
 
 - Clear Cache options
-- Rotate screen without reloading the page
 - Have multiple instances of the app open at once

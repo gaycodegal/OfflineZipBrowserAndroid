@@ -14,6 +14,10 @@ class HtmlViewActivity : WebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view)
+        if (savedInstanceState != null) {
+            return
+        }
+
         val webView = findViewById<WebView>(R.id.webview)
         val file = File(intent.getStringExtra(ZipConstants.FILE_NAME) ?: return)
         title = loadWebsiteFromFile(this, webView, file)
