@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // TODO find new file picker
+    //@Deprecated("Looks like our old file picker version is deprecated")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         ignoreBack = true

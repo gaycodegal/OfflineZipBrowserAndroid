@@ -15,6 +15,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "My Application"
+rootProject.name = "Offline Zip Browser"
 include ':app'
 include ':UnicornFilePicker'

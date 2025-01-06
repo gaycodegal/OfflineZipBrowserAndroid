@@ -18,6 +18,8 @@ open class WebActivity: AppCompatActivity() {
     private var mUploadMessage: ValueCallback<Array<Uri>>? = null
     private val PICKED_SUCCESS_RESULTCODE = 3
 
+    // TODO write new file chooser
+    //@Deprecated("Choosing files potentially different now")
     override fun onActivityResult(
         requestCode: Int, resultCode: Int,
         intent: Intent?
@@ -110,7 +112,7 @@ open class WebActivity: AppCompatActivity() {
                 mUploadMessage = filePathCallback
                 val i = Intent(Intent.ACTION_GET_CONTENT)
                 i.addCategory(Intent.CATEGORY_OPENABLE)
-                i.setType("*/*")
+                i.type = "*/*"
                 
                 this@WebActivity.startActivityForResult(
                     Intent.createChooser(i, "File Chooser"),

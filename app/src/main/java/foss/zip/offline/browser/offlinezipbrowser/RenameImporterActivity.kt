@@ -109,7 +109,8 @@ class RenameImporterActivity : AppCompatActivity() {
         Util.launchFilePicker(this)
     }
 
-
+    // TODO find new file picker
+    //@Deprecated("Looks like our old file picker version is deprecated")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Constants.REQ_UNICORN_FILE ) {
