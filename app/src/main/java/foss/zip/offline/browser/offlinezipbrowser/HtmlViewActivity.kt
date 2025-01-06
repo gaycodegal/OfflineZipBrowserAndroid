@@ -14,9 +14,13 @@ class HtmlViewActivity : WebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view)
+        if (savedInstanceState != null) {
+            return
+        }
+
         val webView = findViewById<WebView>(R.id.webview)
         val file = File(intent.getStringExtra(ZipConstants.FILE_NAME) ?: return)
-        title = loadWebsiteFromFile(this, webView, file, savedInstanceState)
+        title = loadWebsiteFromFile(this, webView, file)
         webviewSetup(webView)
     }
 
@@ -29,18 +33,16 @@ class HtmlViewActivity : WebActivity() {
         }
 
         @SuppressLint("SetJavaScriptEnabled")
-        fun loadWebsiteFromFile(context: Context?, webView: WebView, file: File, savedInstanceState: Bundle?, url: String): String {
+        fun loadWebsiteFromFile(context: Context?, webView: WebView, file: File, url: String): String {
             val name = file.toUri().lastPathSegment
             webView.webViewClient = HtmlAssetLoader(file, context?.assets?.open("downloadNameHelper.js")?.bufferedReader(Charsets.UTF_8)?.readText())
             Util.webviewSetup(webView)
-            if (savedInstanceState == null) {
-                webView.loadUrl(url)
-            }
+            webView.loadUrl(url)
             return name ?: ""
         }
 
-        fun loadWebsiteFromFile(context: Context?, webView: WebView, file: File, savedInstanceState: Bundle?): String {
-            return loadWebsiteFromFile(context, webView, file, savedInstanceState, Util.siteNameFromFile(file))
+        fun loadWebsiteFromFile(context: Context?, webView: WebView, file: File): String {
+            return loadWebsiteFromFile(context, webView, file, Util.siteNameFromFile(file))
         }
     }
 }
